@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💖</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { --primary: #ff4d6d; --gold: #ffd700; --dark-rose: #800e26; --soft-pink: #ffb3c1; }
+        *{margin:0;padding:0;box-sizing:border-box;font-family: 'Georgia', serif; cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="%23ff4d6d" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'), auto; }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #2c0b1e 0%, #0a0a0a 100%);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 50px 10px; color: white; overflow-x: hidden;
+            opacity: 0; transition: opacity 2s ease-in-out;
+        }
+
+        .heart-float {
+            position: fixed; color: var(--primary); font-size: 20px;
+            pointer-events: none; z-index: 0; animation: floatUp 5s linear forwards;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        .gallery {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px; width: 100%; max-width: 1400px; margin-bottom: 150px; padding: 20px; z-index: 1;
+        }
+
+        .polaroid {
+            background: white; 
+            padding: 15px 15px 45px 15px; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: rotate(var(--r)); 
+            transition: 0.4s;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .polaroid:hover { transform: scale(1.1) rotate(0deg) !important; z-index: 100; }
+        .polaroid img, .polaroid video { width: 100%; height: 250px; object-fit: cover; display: block; border: 1px solid #f0f0f0; }
+
+        .polaroid-text {
+            color: #444; font-size: 15px; margin-top: 15px;
+            font-family: 'Brush Script MT', 'Comic Sans MS', cursive;
+            text-align: center; width: 100%; line-height: 1.3;
+        }
+
+        .envelope-container { position: relative; width: 320px; height: 220px; margin-bottom: 550px; z-index: 10; }
+        .envelope { width: 100%; height: 100%; background: var(--dark-rose); border-radius: 0 0 15px 15px; cursor: pointer; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
+        .flap { position: absolute; top: 0; width: 0; height: 0; border-left: 160px solid transparent; border-right: 160px solid transparent; border-top: 120px solid #a4133c; transform-origin: top; transition: 0.8s ease; z-index: 12; }
+
+        .letter {
+            position: absolute; bottom: 20px; left: -20px; width: 360px; min-height: 480px;
+            background: #fff; padding: 40px 30px; color: #333; transition: 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 5; opacity: 0; text-align: center; border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3); pointer-events: none;
+            overflow: hidden;
+        }
+
+        .envelope.open .flap { transform: rotateX(180deg); z-index: 8; }
+        .envelope.open .letter { opacity: 1; transform: translateY(-530px); z-index: 20; pointer-events: auto; }
+
+        .letter-text { font-size: 17px; line-height: 1.8; color: #444; margin-bottom: 25px; min-height: 150px; }
+        .ring-btn { display: inline-block; width: 70px; height: 70px; line-height: 70px; background: #fff; border: 3px solid var(--gold); border-radius: 50%; font-size: 35px; cursor: pointer; box-shadow: 0 0 15px var(--gold); transition: 0.3s; }
+
+        #proposalSection { display: none; margin-top: 10px; border-top: 1px dashed var(--soft-pink); padding-top: 20px; position: relative; height: 250px; }
+        .question { font-size: 20px; color: var(--primary); font-weight: bold; margin-bottom: 30px; display: block; }
+        .btn-container { display: flex; justify-content: center; gap: 20px; margin-top: 20px; position: relative; }
+        .ans-btn { padding: 12px 30px; font-size: 16px; border-radius: 30px; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        #yesBtn { background: linear-gradient(45deg, var(--primary), #ff758f); color: white; box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3); }
+        #noBtn { background: #f8f9fa; color: #888; border: 1px solid #ddd; position: absolute; white-space: nowrap; }
+
+        #bigSurprise { position: absolute; top: -100px; left: 50%; width: 900px; transform: translate(-50%, -50%) scale(0); z-index: 100; opacity: 0; pointer-events: none; transition: 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #bigSurprise.bloom { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+
+        .success-msg { color: var(--primary); font-size: 24px; font-weight: bold; display: none; margin-top: 50px; animation: heartbeat 1.2s infinite; }
+        @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body onclick="startMusicOnce()" ontouchstart="startMusicOnce()" onwheel="startMusicOnce()">
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="duu.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="gallery" id="loveGallery"></div>
+
+    <div class="envelope-container">
+        <img src="tsetseg.png" id="bigSurprise" alt="Flower">
+        <div class="envelope" onclick="openEnvelope()">
+            <div class="flap"></div>
+            <div class="letter" id="letterBox">
+                <div id="initialContent">
+                    <h2 style="color: var(--primary); margin-bottom: 20px;">💖 Хайртайдаа 💖</h2>
+                    <div class="letter-text" id="typewriter"></div>
+                    <div class="ring-btn" id="ringBtn" style="display:none;" onclick="startProposal(event)">💍</div>
+                </div>
+
+                <div id="proposalSection">
+                    <span class="question"> 💝 Надтай үерхээч ❤️</span>
+                    <div class="btn-container">
+                        <button id="yesBtn" class="ans-btn" onclick="handleYes(event)">Тийм</button>
+                        <button id="noBtn" class="ans-btn">Үгүй</button>
+                    </div>
+                </div>
+
+                <div id="successMessage" class="success-msg">
+                    ❤️ Хайртай шүү! ✨❤️
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const music = document.getElementById('bgMusic');
+        let musicStarted = false;
+
+        function startMusicOnce() {
+            if (!musicStarted) {
+                music.play().then(() => {
+                    musicStarted = true;
+                }).catch(e => console.log("Play blocked"));
+            }
+        }
+
+        window.addEventListener('scroll', startMusicOnce, { once: true });
+
+        const letterContent = "💖 Энэхүү захиаг уншиж байгаа чамдаа энэ дэлхийн хамгийн сайхан бүхнийг хүсье. Бидний хамтдаа өнгөрүүлсэн хором бүр миний хувьд хамгийн үнэ цэнэтэй дурсамж юм. Чи намайг үнэхээр тайвшруулж хүүхэд шиг байлгаж чаддаг шүү. Чиний тэр харц, инээмсэглэл надад үнэхээр их аз жаргалыг мэдрүүлдэг... 💖";
+
+        function loadGallery() {
+            const gallery = document.getElementById('loveGallery');
+            let allMedia = [];
+
+            // --- ЭНД ЗУРАГ БҮРИЙН ТАЙЛБАРЫГ БИЧНЭ ҮҮ ---
+            const photoCaptions = [
+                "Миний нүд гоё харагдаад хх ✨", 
+                "Энэ зураг аймаар хөөрхөн зураг шүү🥰",
+                "Ахиад ингээд  хэвтмээр байна☀️",
+                "Love Жүү❤️",
+                "Bby Бүр аймар эгдүүтэй 😊",
+                "Их SELFIE   💖",
+                "Шарсан төмсөн хайр хх🌍",
+                "Тэр хөөрхөн нүдийг би яаж гүйцэх билээ😍",
+                "Гоё камер шүү🌸",
+                "Bby Дээрээсээ хх 🌹",
+                "Зby Урдаасаа хх👸",
+                "Зby Хөөрхөн уруул 💑",
+                "Belly Dancer ✨",
+                "Үнжий үнжий 💎",
+                "Үсээ хоёр боосон хөөрхөн гүнж 💞",
+                "Би дээрээсээ ххах 💖",
+                "Хөөрхөн bby 🔥",
+                "Гоё гартай шүү чи бид хоёр 😊",
+                "Ийм хөөрхөн 🌟",
+                "Миний дуртай зураг🤝",
+                "Ийм эгдүүтэй хөөрхөн bby 💘"
+            ];
+
+            // --- БИЧЛЭГ БҮРИЙН ТАЙЛБАРЫГ БИЧНЭ ҮҮ ---
+            const videoCaptions = [
+                "Үнсүүлдэг тоглоом 🎥", "Чамайг хөтлөөд 🎥", "Хөөрхөн Effect 🎥", "Хөөрхөн тоглоом байсан шүү🎥",
+                "Хэмнэлтэй хөдлөж байгаа биз хх 🎥", "Өглөөний мэнд гүнжээ 🎥", "Хөөрхөн бичлэг🎥", "Аая аая хх 🎥",
+                "Би эмэгтэй байсан болч хх 🎥", "Энэ бол би хх🎥", "Энэ Effect гоё 🎥", "Хэнтэй адилхан байна даа🎥",
+                "Энэ ёстой гоё тоглоом🎥", "Чи хөөрхөн би ч хөөрхөн хх 🎥", "Гоё биетэй bby мүаа<2 🎥", "Чамайг хүргэж өгнөө 🎥",
+                "Мэдрэмжтэй бас хх 🎥", "Вуадада хөөрхөн гүнж 🎥", "Зайрмагчин хх 🎥", "Ийм өхөөрдөм bby 🎥",
+                "Хөөрхөн чамайгаа 🎥"
+            ];
+
+            // Зургуудыг нэмэх
+            for(let i=1; i<=21; i++) {
+                allMedia.push({ 
+                    type: 'img', 
+                    src: `zurag${i}.jfif`, 
+                    caption: photoCaptions[i-1] || "Хайртай шүү ❤️" 
+                });
+            }
+
+            // Бичлэгүүдийг нэмэх
+            for(let i=1; i<=21; i++) {
+                allMedia.push({ 
+                    type: 'video', 
+                    src: `bichleg${i}.mp4`, 
+                    caption: videoCaptions[i-1] || "Аз жаргалтай мөч 🎥" 
+                });
+            }
+            
+            // Санамсаргүй байдлаар холих (Хэрэв бичсэн дарааллаараа байлгах бол доорх мөрийг устгаарай)
+            allMedia.sort(() => Math.random() - 0.5);
+
+            allMedia.forEach(file => {
+                const div = document.createElement('div');
+                div.className = 'polaroid';
+                div.style.setProperty('--r', `${(Math.random() * 12 - 6)}deg`);
+                
+                let mediaHTML = file.type === 'img' 
+                    ? `<img src="${file.src}" onerror="this.src='https://via.placeholder.com/250x250?text=Love'">`
+                    : `<video src="${file.src}" autoplay muted loop playsinline></video>`;
+                
+                div.innerHTML = `${mediaHTML}<div class="polaroid-text">${file.caption}</div>`;
+                gallery.appendChild(div);
+            });
+        }
+
+        function createFloatingHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️'; heart.className = 'heart-float';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+        setInterval(createFloatingHeart, 500);
+
+        function typeWriter() {
+            let i = 0; const ele = document.getElementById("typewriter");
+            ele.innerHTML = "";
+            function type() {
+                if (i < letterContent.length) { ele.innerHTML += letterContent.charAt(i); i++; setTimeout(type, 50); }
+                else { document.getElementById("ringBtn").style.display = "inline-block"; }
+            }
+            type();
+        }
+
+        function openEnvelope() {
+            const env = document.querySelector('.envelope');
+            if(!env.classList.contains('open')) {
+                env.classList.add('open');
+                setTimeout(typeWriter, 1000);
+            }
+            startMusicOnce();
+        }
+
+        function startProposal(e) {
+            e.stopPropagation();
+            document.getElementById('initialContent').style.display = 'none';
+            document.getElementById('proposalSection').style.display = 'block';
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            noBtn.style.left = (yesBtn.offsetLeft + yesBtn.offsetWidth + 20) + 'px';
+            noBtn.style.top = yesBtn.offsetTop + 'px';
+        }
+
+        const noBtn = document.getElementById('noBtn');
+        const letterBox = document.getElementById('letterBox');
+        noBtn.addEventListener('mouseover', () => {
+            const padding = 20;
+            const maxX = letterBox.clientWidth - noBtn.clientWidth - padding;
+            const maxY = letterBox.clientHeight - noBtn.clientHeight - padding;
+            noBtn.style.left = Math.random() * maxX + 'px';
+            noBtn.style.top = Math.random() * maxY + 'px';
+        });
+
+        function handleYes(e) {
+            e.stopPropagation();
+            document.getElementById('proposalSection').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('bigSurprise').classList.add('bloom');
+            const end = Date.now() + (15 * 1000);
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4d6d', '#ffd700'] });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff4d6d', '#ffd700'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        window.onload = () => { loadGallery(); document.body.style.opacity = "1"; };
+    </script>
+</body>
+</html>

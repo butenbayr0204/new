@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>❤️</title>
+
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff85a1;
+            --accent: #ffd700;
+            --card-bg: rgba(15, 5, 10, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            background: radial-gradient(circle at center, #2b0b1a 0%, #000000 100%);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+            position: relative;
+        }
+
+        /* Эхлэх Overlay */
+        #start-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+            transition: opacity 0.8s ease;
+            text-align: center;
+        }
+
+        .pulse-heart {
+            font-size: 60px;
+            animation: heartBeat 1.2s infinite;
+            filter: drop-shadow(0 0 15px var(--primary));
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- LUXURY КАРТ --- */
+        .card-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .card-container {
+            position: relative;
+            width: 340px;
+            padding: 4px;
+            border-radius: 40px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+
+        .card-container::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent, transparent, transparent, 
+                var(--primary), var(--secondary), var(--accent),
+                transparent
+            );
+            animation: rotateGlow 4s linear infinite;
+        }
+
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            padding: 45px 30px;
+            background: var(--card-bg);
+            border-radius: 36px;
+            backdrop-filter: blur(25px);
+            z-index: 2;
+            text-align: center;
+        }
+
+        /* --- НЭРНИЙ ХЭСЭГ (ШИНЭ) --- */
+        .name-badge {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 77, 109, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .name-badge h2 {
+            font-size: 20px;
+            color: var(--accent);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            animation: glowName 2s infinite alternate;
+        }
+
+        @keyframes glowName {
+            from { text-shadow: 0 0 5px var(--accent); opacity: 0.8; }
+            to { text-shadow: 0 0 20px var(--accent), 0 0 30px var(--primary); opacity: 1; }
+        }
+
+        .card h1 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #fff;
+            line-height: 1.4;
+        }
+
+        .card h1 span {
+            display: block;
+            font-size: 30px;
+            background: linear-gradient(to right, #fff, var(--secondary), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textFlow 3s linear infinite;
+            background-size: 200% auto;
+        }
+
+        @keyframes textFlow {
+            to { background-position: 200% center; }
+        }
+
+        .card p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .modern-btn {
+            position: relative;
+            padding: 16px 40px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #ff0055, #ff85a1);
+            color: white;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(255, 0, 85, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modern-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(255, 0, 85, 0.6);
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -50px;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatUp linear forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0) rotate(0deg); opacity: 0; }
+            15% { opacity: 0.8; }
+            100% { transform: translateY(-115vh) scale(1.3) rotate(90deg); opacity: 0; }
+        }
+
+        .bg-glow {
+            position: absolute;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 77, 109, 0.1) 0%, transparent 70%);
+            animation: pulseBg 8s infinite alternate;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="start-overlay" onclick="startApp()">
+        <div class="pulse-heart">❤️</div>
+        <p style="margin-top:20px; font-weight: 300; letter-spacing: 1px;">Чамдаа зориулав...<br><span style="font-size: 12px; opacity: 0.7;">(Дэлгэцэн дээр дараарай)</span></p>
+    </div>
+
+    <div class="bg-glow"></div>
+
+    <audio id="love-song" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card-wrapper">
+        <div class="card-container">
+            <div class="card">
+                <div class="name-badge">
+                    <h2>❤️Нансалмаа❤️</h2>
+                </div>
+
+                <h1>❤️ Чамдаа ❤️<br><span>Валентины баярын мэнд</span></h1>
+                <p>"Хөөрөхөн чамдаа хайртайгаа хэлэх хамгийн сайхан өдөр өнөөдөр. Чамдаа зориулав."</p>
+                
+                <button class="modern-btn" onclick="nextPage()">
+                    Энд дараарай 💌
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const song = document.getElementById("love-song");
+    const overlay = document.getElementById("start-overlay");
+
+    function startApp() {
+        song.play().catch(e => console.log("Дуу тоглуулахын тулд song.mp3 файл байх ёстой."));
+        overlay.style.opacity = "0";
+        setTimeout(() => { overlay.style.display = "none"; }, 800);
+    }
+
+    function nextPage() {
+        const wrapper = document.querySelector('.card-wrapper');
+        wrapper.style.transition = "all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55)";
+        wrapper.style.transform = "scale(0) rotate(10deg)";
+        wrapper.style.opacity = "0";
+        setTimeout(() => { window.location.href = 'zahia.html'; }, 600);
+    }
+
+    function createHeart() {
+        const heart = document.createElement("div");
+        const hearts = ["❤️", "LOVE", "💝", "💕", "💌"];
+        heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.className = "heart";
+        heart.style.fontSize = (Math.random() * 20 + 10) + "px";
+        heart.style.left = (Math.random() * 90 + 5) + "vw"; 
+        const duration = Math.random() * 3 + 4;
+        heart.style.animationDuration = duration + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => { heart.remove(); }, duration * 1000);
+    }
+    setInterval(createHeart, 400);
+</script>
+</body>
+</html>
